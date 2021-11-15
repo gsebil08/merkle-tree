@@ -81,5 +81,7 @@ merkleSpec = do
                   ]
       SUT.combine digest1 digest2 `shouldBe` mkr
 ```
-Of course, if you don't change the `mkr` Hex value (`"4f7333e0a41d00da0abac20e4a4c3b5485ade6b74c7a766b1a6d334c23cc870c"` in our example), the test will fail:
+
+Of course, if you don't change the `mkr` Hex value (`"4f7333e0a41d00da0abac20e4a4c3b5485ade6b74c7a766b1a6d334c23cc870c"`
+in our example), the test will fail:
 ![img.png](img.png)

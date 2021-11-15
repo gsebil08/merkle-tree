@@ -8,6 +8,7 @@ import Model.Types (MerkleTree (..))
 import Relude
 import Test.Hspec
 
+-- These SHA 256 Hex values are generated thanks to https://emn178.github.io/online-tools/sha256.html
 anyValidData :: Text
 anyValidData = "c67579305b91024bf849d4769c3110fac3f2d18678f20364e8f8b961cfcc8758" --Hex representation of "anyValidData"
 
@@ -23,20 +24,21 @@ anyValidDataQuater = "9cc3cdb9ae29e2c2ae606601fccd546c4b767e7a07d5f8353f40484b20
 anyValidDataQuinquies :: Text
 anyValidDataQuinquies = "d17f257be7cab8937bb0c063456156fae4a90362a6a5774faf7f0eec63028450" --Hex representation of "anyValidDataQuinquies"
 
+-- To be honest, I ran the test to get the correct expected values
 merkleSpec :: Spec
 merkleSpec = do
   describe "TESTING: Merkle.combine" $
     it "combines two Digest SHA256" $ do
-      let [digest1, digest2, mkr] =
+      let [digest1, digest2, mkRoot] =
             fromJust . parseSHA256
               <$> [ anyValidData,
                     anyValidDataBis, --anyValidDataBis
                     "4f7333e0a41d00da0abac20e4a4c3b5485ade6b74c7a766b1a6d334c23cc870c"
                   ]
-      SUT.combine digest1 digest2 `shouldBe` mkr
+      SUT.combine digest1 digest2 `shouldBe` mkRoot
 
   describe "TESTING: Merkle.SUT.parseSHA256" $ do
-    it "from Text hex representation to Digest" $ do
+    it "from Text hex representation to digest" $ do
       let sha256 = "c67579305b91024bf849d4769c3110fac3f2d18678f20364e8f8b961cfcc8758"
           expected = Just $ hashWith SHA256 ("anyValidData" :: ByteString)
       SUT.parseSHA256 sha256 `shouldBe` expected
@@ -62,14 +64,14 @@ merkleSpec = do
       SUT.combineSHA256 digest1 digest2 `shouldBe` Just expected
 
   describe "TESTING: Merkle.merkleRoot" $ do
-    it "computes merkle tree root from an even list of SHA256 hex text" $ do
-      let mkr = "1dfe43abc2b36ec77b296ec9ad353e85578fd09ebc6698778c342286c1302234"
+    it "computes merkle tree root from an even list of digests" $ do
+      let mkRoot = "1dfe43abc2b36ec77b296ec9ad353e85578fd09ebc6698778c342286c1302234"
           digests = [anyValidData, anyValidDataBis, anyValidDataTer, anyValidDataQuater]
           rootDigest = fromJust $ traverse SUT.parseSHA256 digests
-          expected = fromJust $ SUT.parseSHA256 mkr
+          expected = fromJust $ SUT.parseSHA256 mkRoot
       SUT.merkleRoot rootDigest `shouldBe` expected
 
-    it "computes merkle tree root from an odd list of SHA256 hex text" $ do
+    it "computes merkle tree root from an odd list of digests" $ do
       let mkRoot = "ccff14663f259b72941763eb7718f6f501076bf2128f424f9cd341db8a8ef770"
           digests = [anyValidData, anyValidDataBis, anyValidDataTer, anyValidDataQuater, anyValidDataQuinquies]
           rootDigest = fromJust $ traverse SUT.parseSHA256 digests
