@@ -1,0 +1,95 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           merkle-tree
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/gsebil08/merkle-tree#readme>
+homepage:       https://github.com/gsebil08/merkle-tree#readme
+bug-reports:    https://github.com/gsebil08/merkle-tree/issues
+author:         Gauthier SEBILLE
+maintainer:     gauthier.sebille@gmail.com
+copyright:      2019 GSE
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/gsebil08/merkle-tree
+
+library
+  exposed-modules:
+      Lib
+      Merkle
+      Model.Types
+      Model.Utils
+  other-modules:
+      Paths_merkle_tree
+  hs-source-dirs:
+      src
+  default-extensions:
+      NoImplicitPrelude
+      ScopedTypeVariables
+      OverloadedStrings
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , cryptonite
+    , hexstring
+    , memory
+    , relude
+    , text
+  default-language: Haskell2010
+
+executable merkle-tree-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_merkle_tree
+  hs-source-dirs:
+      app
+  default-extensions:
+      NoImplicitPrelude
+      ScopedTypeVariables
+      OverloadedStrings
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -fprint-potential-instances
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , cryptonite
+    , hexstring
+    , memory
+    , merkle-tree
+    , relude
+    , text
+  default-language: Haskell2010
+
+test-suite merkle-tree-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      MerkleSpec
+      Model.UtilsSpec
+      Paths_merkle_tree
+  hs-source-dirs:
+      test
+  default-extensions:
+      NoImplicitPrelude
+      ScopedTypeVariables
+      OverloadedStrings
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -fno-warn-missing-signatures -fno-warn-incomplete-uni-patterns -fprint-potential-instances
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , cryptonite
+    , hexstring
+    , hspec
+    , memory
+    , merkle-tree
+    , relude
+    , text
+  default-language: Haskell2010
