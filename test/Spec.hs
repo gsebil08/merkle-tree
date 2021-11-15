@@ -1,11 +1,11 @@
 module Main where
 
 import MerkleSpec (merkleSpec)
-import Model.UtilsSpec (listSpec)
+import Model.UtilsSpec (utilsSpec)
 import Relude
 import Test.Hspec
 
 main :: IO ()
 main = hspec $ do
-  listSpec
+  utilsSpec
   merkleSpec

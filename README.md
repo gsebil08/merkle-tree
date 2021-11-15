@@ -31,7 +31,7 @@ $ nix-shell
 
 ### Modifying tests
 
-At the beginning of [MerkleSpec](test/MerkleSpec.hs) there are some `Text` which are the SHA256 hex representation of
+At the beginning of [MerkleSpec](test/Commons.hs) there are some `Text` which are the SHA256 hex representation of
 poorly chose values:
 
 ```haskell
@@ -63,12 +63,14 @@ anyValidData = "04fde3471765d709f60613c849bcc0726cd6d666fb871bc0acde28dbe227a1e8
 - Create new constants using new Hex value and use them in test suite:
 
 ```haskell
+-- Module Commons
 myCustomData :: Text
 myCustomData = "04fde3471765d709f60613c849bcc0726cd6d666fb871bc0acde28dbe227a1e8" --Hex representation of "myCustomData"
 
 myCustomDataBis :: Text
 myCustomDataBis = "a379aac97a52d544f357599fa2b2d344291797f577f79bd1861d1e0b71c6a682" --Hex representation of "myCustomDataBis"
 
+-- Module MerkleSpec
 merkleSpec :: Spec
 merkleSpec = do
   describe "TESTING: Merkle.combine" $
