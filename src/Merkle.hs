@@ -10,59 +10,32 @@ import Crypto.Hash
     digestFromByteString,
     hash,
   )
-import Data.ByteArray (concat, convert)
-import qualified Data.Char as Char (isHexDigit)
-import qualified Data.HexString as Hex (fromBytes, hexString, toBytes, toText)
+import Data.ByteArray (concat)
+import Data.List (head)
 import Data.Maybe (fromJust)
-import qualified Data.Text as Text (all, length)
 import Model.Types (MerkleTree (..))
 import Model.Utils (listToTuples)
-import Relude hiding (reverse, head, concat)
-import Data.List (head)
+import Relude hiding (concat, head, reverse)
 
 -- | Combine two Digests
 combine :: forall a. HashAlgorithm a => Digest a -> Digest a -> Digest a
-combine firstHash secondHash =
-  merge firstHash secondHash
-    & doubleHash
-    & digestFromByteString
-    & fromJust
+combine firstHash secondHash = fromJust . digestFromByteString . doubleHash $ merge firstHash secondHash
   where
+    merge :: Digest a -> Digest a -> ByteString
     merge x y = concat [y, x] :: ByteString
+    doubleHash :: ByteString -> Digest a
     doubleHash a = hash (hash a :: Digest a) :: Digest a
 
--- | Simply parser to get real Hex from Text representation
-parseSHA256 :: Text -> Maybe (Digest SHA256)
-parseSHA256 t
-  | isSHA256 t = parse t
-  | otherwise = Nothing
-  where
-    parse = digestFromByteString . Hex.toBytes . Hex.hexString . encodeUtf8
-
--- | Check if the given Text is a correct Hex value
-isSHA256 :: Text -> Bool
-isSHA256 t = isHex && hasLength
-  where
-    isHex = Text.all Char.isHexDigit t
-    hasLength = Text.length t == 64
-
--- | Given two Hex digests of a SHA256 it 'combine's them and return the result.
--- 'Nothing' is returned when the given 'Text' are not valid SHA256 digest.
-combineSHA256 :: Text -> Text -> Maybe Text
-combineSHA256 h g
-  | not (isSHA256 h && isSHA256 g) = Nothing
-  | otherwise = toHexText <$> maybeDigest
-  where
-    toHexText = Hex.toText . Hex.fromBytes . convert
-    maybeDigest = combine <$> parseSHA256 h <*> parseSHA256 g
-
 -- | Compute the Merkle Tree Root from the given list
--- What should I do if the given list is empty?
+-- While the length of the list is not equal to 1, it means this is not the root of the tree. Hence, continue.
+-- TODO: What should I do with an empty list?
 merkleRoot :: [Digest SHA256] -> Digest SHA256
-merkleRoot digests
-  | length reduced == 1 = head reduced
-  | otherwise = merkleRoot reduced
+merkleRoot digests =
+  if length reduced == 1
+    then head reduced
+    else merkleRoot reduced
   where
+    reduced :: [Digest SHA256]
     reduced = map (uncurry combine) $ listToTuples digests
 
 -- | Build a 'MerkleTree' from the given list
@@ -72,11 +45,11 @@ merkleTree = buildTree . getLeavesFromDigests
 getLeavesFromDigests :: [Digest SHA256] -> [MerkleTree (Digest SHA256)]
 getLeavesFromDigests txs = (\x -> Node x Leaf Leaf) <$> txs
 
--- | Inner function to build
+-- | Inner function to build the tree
 buildTree :: [MerkleTree (Digest SHA256)] -> MerkleTree (Digest SHA256)
 buildTree [] = Leaf
 buildTree trees =
-  let nodes = map (uncurry asNode) $ listToTuples trees
+  let nodes :: [MerkleTree (Digest SHA256)] = map (uncurry asNode) $ listToTuples trees
    in case length nodes of
         1 -> head nodes
         _ -> buildTree nodes
