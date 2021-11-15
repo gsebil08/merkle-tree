@@ -28,7 +28,7 @@ let
 in
 mkShell {
 
-  # Useful packages for One Catalog, you can manually use `nix-shell` to get a shell with everything configured, or even better, install `nix-direnv`, see `.envrc`
+  # Useful packages, you can manually use `nix-shell` to get a shell with everything configured, or even better, install `nix-direnv`, see `.envrc`
   buildInputs = [
     stack
 
@@ -37,7 +37,6 @@ mkShell {
     ormolu
     # Code suggestions
     hlint
-    # Haddock parsing and search
 
   ];
 

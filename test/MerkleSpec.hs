@@ -45,7 +45,7 @@ merkleSpec = do
 
   describe "TESTING: Merkle.isSHA256" $ do
     it "test isSHA256 on valid and invalid data" $ do
-      let valid = "ee6bc0e5f95a4ccd0f00784eab850ff8593f9045de96c6656df41c8f9f9c0888"
+      let valid = "c67579305b91024bf849d4769c3110fac3f2d18678f20364e8f8b961cfcc8758"
           invalid =
             [ "ee6bc0e5f95a4ccd0f00784eab850ff8593f9045de96c6656df41c8f9f9c088Z",
               "ee6bc0e5f95a4ccd0f00784ea",
