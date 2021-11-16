@@ -11,7 +11,7 @@ merkleTree :: [Digest SHA256] -> MerkleTree (Digest SHA256)
 merkleTree = buildTree . getLeavesFromDigests
 
 getLeavesFromDigests :: [Digest SHA256] -> [MerkleTree (Digest SHA256)]
-getLeavesFromDigests txs = (\x -> Node x Leaf Leaf) <$> txs
+getLeavesFromDigests txs = (\x -> Node x Leaf (Just Leaf)) <$> txs
 
 -- | Inner function to build the tree
 buildTree :: [MerkleTree (Digest SHA256)] -> MerkleTree (Digest SHA256)

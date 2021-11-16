@@ -9,14 +9,15 @@ import Relude hiding (concat, head)
 
 -- | Create list of tuples from a given list
 -- When the list contains only one element, it will be on the two side of the tuple
-listToTuples :: [a] -> [(a, a)]
+listToTuples :: [a] -> [(a, Maybe a)]
 listToTuples [] = []
-listToTuples [x] = [(x, x)]
-listToTuples (x : y : zs) = (x, y) : listToTuples zs
+listToTuples [x] = [(x, Nothing)]
+listToTuples (x : y : zs) = (x, Just y) : listToTuples zs
 
 -- | Combine two Digests
-combine :: forall a. HashAlgorithm a => Digest a -> Digest a -> Digest a
-combine firstHash secondHash = fromJust . digestFromByteString . doubleHash $ merge firstHash secondHash
+combine :: forall a. HashAlgorithm a => Digest a -> Maybe (Digest a) -> Digest a
+combine firstHash Nothing = firstHash
+combine firstHash (Just secondHash) = fromJust . digestFromByteString . doubleHash $ merge firstHash secondHash
   where
     merge :: Digest a -> Digest a -> ByteString
     merge x y = concat [y, x] :: ByteString
@@ -38,6 +39,7 @@ merkleRoot digests =
 -- | Helper function to get the nodes of the leaf in order to build the tree
 -- The unique business case, is when we have elements in both 'side' of the tuple, it means it is a node
 -- Let's return a Leaf in any other case
-asNode :: MerkleTree (Digest SHA256) -> MerkleTree (Digest SHA256) -> MerkleTree (Digest SHA256)
-asNode left@(Node x _ _) right@(Node y _ _) = Node (combine x y) left right
+asNode :: MerkleTree (Digest SHA256) -> Maybe (MerkleTree (Digest SHA256)) -> MerkleTree (Digest SHA256)
+asNode left@(Node x _ _) (Just right@(Node y _ _)) = Node (combine x (Just y)) left (Just right)
+asNode left@(Node x _ _) Nothing = Node (combine x Nothing) left Nothing
 asNode _ _ = Leaf
