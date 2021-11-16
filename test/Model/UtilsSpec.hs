@@ -49,3 +49,21 @@ utilsSpec = do
           rootDigest = fromJust $ traverse parseSHA256 digests
           expected = fromJust $ parseSHA256 mkRoot
       SUT.merkleRoot rootDigest `shouldBe` expected
+
+    it "When adding leaf to an existing tree, the mkroot is different from the initial" $ do
+      let digests1 = [anyValidData, anyValidDataBis, anyValidDataTer, anyValidDataQuater]
+          digests2 = [anyValidData, anyValidDataBis, anyValidDataTer, anyValidDataQuater, anyValidDataQuinquies]
+          rootDigest1 = fromJust $ traverse parseSHA256 digests1
+          rootDigest2 = fromJust $ traverse parseSHA256 digests2
+          mkRoot1 = SUT.merkleRoot rootDigest1
+          mkRoot2 = SUT.merkleRoot rootDigest2
+      mkRoot1 `shouldNotBe` mkRoot2
+
+    it "Root of two identical Merkle trees are identical" $ do
+      let digests1 = [anyValidData, anyValidDataBis, anyValidDataTer, anyValidDataQuater]
+          digests2 = [anyValidData, anyValidDataBis, anyValidDataTer, anyValidDataQuater]
+          rootDigest1 = fromJust $ traverse parseSHA256 digests1
+          rootDigest2 = fromJust $ traverse parseSHA256 digests2
+          mkRoot1 = SUT.merkleRoot rootDigest1
+          mkRoot2 = SUT.merkleRoot rootDigest2
+      mkRoot1 `shouldBe` mkRoot2
