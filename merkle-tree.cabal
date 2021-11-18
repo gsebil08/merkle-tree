@@ -72,6 +72,7 @@ test-suite merkle-tree-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Commons
       MerkleSpec
       Model.UtilsSpec
       Paths_merkle_tree
