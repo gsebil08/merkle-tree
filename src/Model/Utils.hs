@@ -42,4 +42,4 @@ merkleRoot digests =
 asNode :: MerkleTree (Digest SHA256) -> Maybe (MerkleTree (Digest SHA256)) -> MerkleTree (Digest SHA256)
 asNode left@(Node x _ _) (Just right@(Node y _ _)) = Node (combine x (Just y)) left (Just right)
 asNode left@(Node x _ _) Nothing = Node (combine x Nothing) left Nothing
-asNode _ _ = Leaf
+asNode leaf _ = leaf
