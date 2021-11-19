@@ -11,11 +11,11 @@ merkleTree :: [Digest SHA256] -> MerkleTree (Digest SHA256)
 merkleTree = buildTree . getLeavesFromDigests
 
 getLeavesFromDigests :: [Digest SHA256] -> [MerkleTree (Digest SHA256)]
-getLeavesFromDigests txs = (\x -> Node x Leaf (Just Leaf)) <$> txs
+getLeavesFromDigests txs = (\x -> Node x (Leaf x) Nothing) <$> txs
 
 -- | Inner function to build the tree
 buildTree :: [MerkleTree (Digest SHA256)] -> MerkleTree (Digest SHA256)
-buildTree [] = Leaf
+buildTree [leaf] = leaf
 buildTree trees =
   let nodes :: [MerkleTree (Digest SHA256)] = map (uncurry asNode) $ listToTuples trees
    in case length nodes of
